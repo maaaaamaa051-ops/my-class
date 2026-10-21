@@ -38,8 +38,8 @@ body {
 .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-.mobile-menu { display: grid; max-height: 0; overflow: hidden; background: rgba(42,7,16,.96); backdrop-filter: blur(12px); transition: max-height .4s ease; }
-.mobile-menu.open { max-height: 360px; }
+.mobile-menu { display: grid; max-height: 0; overflow: hidden; visibility: hidden; background: rgba(42,7,16,.96); backdrop-filter: blur(12px); transition: max-height .4s ease, visibility 0s .4s; }
+.mobile-menu.open { max-height: 360px; visibility: visible; transition: max-height .4s ease; }
 .mobile-menu a { padding: 14px 24px; border-top: 1px solid rgba(232,184,90,.12); color: var(--cream); }
 .mobile-menu a:hover { color: var(--gold); background: rgba(232,184,90,.06); }
 
