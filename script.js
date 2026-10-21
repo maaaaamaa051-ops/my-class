@@ -1,24 +1,25 @@
 'use strict';
 
-/* ===== Настройки (замените на свои) ===== */
-const EVENT_DATE = new Date('2026-10-23T11:00:00'); // дата и время бала
+/* ===== Настройки ===== */
+const EVENT_DATE = new Date('2026-10-23T11:00:00');
 const MUSIC_SRC = '';  // например 'music/autumn.mp3'. Если пусто — играет встроенная мягкая мелодия
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Пока открыто окно, фон недоступен для Tab
+const setInert = v => ['main', '#nav'].forEach(s => { $(s).inert = v; });
 
-/* ===== Временные данные ===== */
+/* ===== Данные ===== */
 const PROGRAM = [
-  ['11:00', 'Сбор гостей', 'Встреча у входа, фотозона и приветственные напитки.'],
-  ['11:30', 'Открытие бала', 'Приветствие и торжественный вальс.'],
-  ['12:15', 'Концертная программа', 'Выступления учеников и творческих коллективов.'],
-  ['13:15', 'Конкурсы и танцы', 'Игры, мини-конкурсы и общий танцпол.'],
-  ['14:15', 'Подведение итогов', 'Объявление результатов жюри и награждение.'],
-  ['15:00', 'Финальный танец', 'Последний танец вечера и общее фото.']
+  ['Конкурс 1', 'Осенняя форма', 'Участники представляют осенние образы и костюмы.'],
+  ['Конкурс 2', 'Приветствие', 'Визитная карточка команды: приветствие жюри и зрителей.'],
+  ['Конкурс 3', 'Трапеза', 'Осенний стол: угощения и их представление.'],
+  ['Конкурс 4', 'Танец', 'Танцевальное выступление команд.'],
+  ['Конкурс 5', 'Мода', 'Показ мод в осеннем стиле.']
 ];
 const PEOPLE = [
-  ['Участник 1', 'Ведущий вечера', 'students'], ['Участница 2', 'Организатор', 'students'],
+  ['Участник 1', 'Ведущий', 'students'], ['Участница 2', 'Организатор', 'students'],
   ['Участник 3', 'Танцор', 'students'], ['Участница 4', 'Вокал', 'students'],
   ['Учитель 1', 'Классный руководитель', 'teachers'], ['Учитель 2', 'Хореограф', 'teachers'],
   ['Гость 1', 'Почётный гость', 'guests'], ['Гость 2', 'Выпускник', 'guests']
@@ -81,16 +82,13 @@ function toast(msg) {
   t.textContent = msg; t.classList.add('show');
   clearTimeout(toast.id); toast.id = setTimeout(() => t.classList.remove('show'), 2400);
 }
-function safeGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
-function safeSet(k, v) { try { localStorage.setItem(k, v); } catch { /* хранилище недоступно */ } }
-
 
 /* ===== Галерея и просмотр ===== */
 // Чтобы использовать свои фото, замените содержимое .g-item на <img src="images/photo1.jpg" alt="...">
 const RATIOS = ['4/5', '1/1', '3/4', '5/4', '4/5', '1/1', '3/4', '1/1'];
 $('#galleryGrid').innerHTML = RATIOS.map((r, i) =>
   `<button type="button" class="g-item reveal" aria-label="Открыть фото ${i + 1}" style="--d:${(i % 3) * .08}s">
-     <div class="ph" style="aspect-ratio:${r};background:${grad(i)}">${PERSON_SVG}<span class="ph-label">Фото ${i + 1}</span></div></button>`).join('');
+     <span class="ph" style="aspect-ratio:${r};background:${grad(i)}">${PERSON_SVG}<span class="ph-label">Фото ${i + 1}</span></span></button>`).join('');
 
 const lb = $('#lightbox'), stage = $('#lbStage');
 const items = $$('.g-item');
@@ -102,8 +100,8 @@ function showPhoto(i) {
   const ph = $('.ph', stage);
   if (ph) ph.style.aspectRatio = '4/3';
 }
-function openLb(i) { lastFocus = document.activeElement; showPhoto(i); lb.hidden = false; document.body.style.overflow = 'hidden'; $('#lbClose').focus(); }
-function closeLb() { lb.hidden = true; document.body.style.overflow = ''; lastFocus && lastFocus.focus(); }
+function openLb(i) { lastFocus = document.activeElement; showPhoto(i); setInert(true); lb.hidden = false; document.body.style.overflow = 'hidden'; $('#lbClose').focus(); }
+function closeLb() { lb.hidden = true; setInert(false); document.body.style.overflow = ''; lastFocus && lastFocus.focus(); }
 items.forEach((it, i) => it.addEventListener('click', () => openLb(i)));
 $('#lbClose').addEventListener('click', closeLb);
 $('#lbPrev').addEventListener('click', () => showPhoto(cur - 1));
@@ -126,12 +124,17 @@ $$('.reveal').forEach(el => io.observe(el));
 const cd = $('#countdown');
 function tick() {
   const diff = EVENT_DATE - new Date();
-  if (diff <= 0) { cd.innerHTML = '<p class="font-serif text-3xl text-gold">Бал начался!</p>'; return clearInterval(tick.id); }
+  if (diff <= 0) {
+    cd.innerHTML = '<p class="font-serif text-3xl text-gold">Конкурс начался!</p>';
+    clearInterval(tick.id);
+    return;
+  }
   const v = [Math.floor(diff / 864e5), Math.floor(diff / 36e5) % 24, Math.floor(diff / 6e4) % 60, Math.floor(diff / 1e3) % 60];
   cd.innerHTML = ['дней', 'часов', 'минут', 'секунд'].map((l, i) =>
     `<div class="cd-box"><b>${String(v[i]).padStart(2, '0')}</b><span>${l}</span></div>`).join('');
 }
-tick(); tick.id = setInterval(tick, 1000);
+tick.id = setInterval(tick, 1000);
+tick();
 
 /* ===== Фоновая музыка ===== */
 const musicBtn = $('#musicBtn');
@@ -275,8 +278,8 @@ function renderScoreTable() {
 function refreshAll() { renderLists(); renderScoreTable(); renderResults(); }
 
 const admin = $('#admin');
-function openAdmin() { admin.hidden = false; document.body.style.overflow = 'hidden'; refreshAll(); $('#adminClose').focus(); }
-function closeAdmin() { admin.hidden = true; document.body.style.overflow = ''; $('#openAdmin').focus(); }
+function openAdmin() { setInert(true); admin.hidden = false; document.body.style.overflow = 'hidden'; refreshAll(); $('#adminClose').focus(); }
+function closeAdmin() { admin.hidden = true; setInert(false); document.body.style.overflow = ''; $('#openAdmin').focus(); }
 $('#openAdmin').addEventListener('click', openAdmin);
 $('#adminClose').addEventListener('click', closeAdmin);
 addEventListener('keydown', e => { if (e.key === 'Escape' && !admin.hidden) closeAdmin(); });
