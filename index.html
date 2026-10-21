@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ОСЕННИЙ БАЛ — 2026</title>
-  <meta name="description" content="Осенний бал 2026 — вечер музыки, танцев и золотых листьев.">
+  <meta name="description" content="Осенний бал 2026 — школьный конкурс талантов, стиля и золотых листьев.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
   <script>
     tailwind.config = { theme: { extend: {
       fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Montserrat', 'sans-serif'] },
-      colors: { wine: '#2a0710', gold: '#e8b85a', amber: '#f08a24' }
+      colors: { wine: '#2a0710', gold: '#e8b85a', ember: '#f08a24' }
     } } };
   </script>
   <link rel="stylesheet" href="style.css">
@@ -50,10 +50,10 @@
   </header>
 
   <main>
-    <!-- 1. Главная -->
+    <!-- Главная -->
     <section id="home" class="min-h-screen flex items-center justify-center text-center px-5 relative hero">
       <div class="relative z-10 max-w-4xl">
-        <p class="tracking-[.35em] text-gold/80 text-xs sm:text-sm mb-6 hero-in" style="--d:.1s">ШКОЛЬНЫЙ КОНКУРС· 23 ОКТЯБРЯ 2026 · 11:00</p>
+        <p class="tracking-[.35em] text-gold/80 text-xs sm:text-sm mb-6 hero-in" style="--d:.1s">ШКОЛЬНЫЙ КОНКУРС · 23 ОКТЯБРЯ 2026 · 11:00</p>
         <h1 class="font-serif font-bold leading-[.95] hero-in" style="--d:.3s">
           <span class="block text-5xl sm:text-7xl lg:text-8xl gold-text">ОСЕНЬ</span>
           <span class="block text-4xl sm:text-6xl lg:text-7xl mt-2 text-amber-100 title-year">— 2026 —</span>
@@ -68,36 +68,35 @@
       <a href="#about" class="scroll-hint" aria-label="Прокрутить вниз"><span></span></a>
     </section>
 
-    <!-- 2. О празднике -->
+    <!-- О празднике -->
     <section id="about" class="section">
       <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         <div class="reveal">
           <h2 class="h2">О празднике</h2>
-          <p class="mt-6 leading-8">Осенний бал — вечер, когда школа превращается в бальный зал. Тёплый свет, живая музыка, танцы и сюрпризы для учеников, учителей и гостей.</p>
-         
+          <p class="mt-6 leading-8">Цель конкурса: развивать творческие способности школьников, воспитывать доброту, благодарность, уважение к природе и стремление к знаниям.</p>
         </div>
         <div class="grid grid-cols-2 gap-4 reveal" style="--d:.15s">
           <div class="card text-center"><div class="stat">11:00</div><p>время начала</p></div>
-          <div class="card text-center"><div class="stat">000</div><p>гостей</p></div>
-          <div class="card text-center"><div class="stat">0</div><p>выступлений</p></div>
-          <div class="card text-center"><div class="stat">2</div><p>титула бала</p></div>
+          <div class="card text-center"><div class="stat">5</div><p>конкурсов</p></div>
+          <div class="card text-center"><div class="stat">23.10</div><p>дата конкурса</p></div>
+          <div class="card text-center"><div class="stat">2026</div><p>год</p></div>
         </div>
       </div>
     </section>
 
-    <!-- 3. Программа -->
+    <!-- Программа -->
     <section id="program" class="section">
       <div class="max-w-3xl mx-auto">
-        <h2 class="h2 text-center reveal">Программа вечера</h2>
+        <h2 class="h2 text-center reveal">Программа конкурса</h2>
         <ol class="timeline mt-14" id="timeline"></ol>
       </div>
     </section>
 
-    <!-- 4. Участники -->
+    <!-- Участники -->
     <section id="people" class="section">
       <div class="max-w-6xl mx-auto">
         <h2 class="h2 text-center reveal">Участники</h2>
-        <div class="flex flex-wrap gap-3 justify-center mt-8 reveal" id="filters" role="tablist" aria-label="Фильтр участников">
+        <div class="flex flex-wrap gap-3 justify-center mt-8 reveal" id="filters" role="group" aria-label="Фильтр участников">
           <button class="chip active" data-f="all">Все</button>
           <button class="chip" data-f="students">Ученики</button>
           <button class="chip" data-f="teachers">Учителя</button>
@@ -107,7 +106,7 @@
       </div>
     </section>
 
-    <!-- 6. Галерея -->
+    <!-- Галерея -->
     <section id="gallery" class="section">
       <div class="max-w-6xl mx-auto">
         <h2 class="h2 text-center reveal">Галерея</h2>
@@ -127,11 +126,11 @@
       </div>
     </section>
 
-    <!-- 7. Финал -->
+    <!-- Финал -->
     <section id="finale" class="min-h-screen flex items-center justify-center text-center px-5 finale">
       <div class="relative z-10 reveal">
-        <p class="font-serif italic text-2xl text-gold/90">Пусть этот вечер запомнится надолго</p>
-        <h2 class="font-serif font-bold text-5xl sm:text-7xl lg:text-8xl gold-text mt-6 leading-tight">До встречи<br>на балу!</h2>
+        <p class="font-serif italic text-2xl text-gold/90">Пусть этот день запомнится надолго</p>
+        <h2 class="font-serif font-bold text-5xl sm:text-7xl lg:text-8xl gold-text mt-6 leading-tight">До встречи<br>на конкурсе!</h2>
         <p class="mt-8 text-amber-100/70">Осенний бал — 2026</p>
         <p class="credit">Сайт создан учениками 10-К класса</p>
         <a href="#home" class="btn-gold mt-10 inline-block">Вернуться наверх</a>
