@@ -114,15 +114,6 @@ body {
 .person .info { padding: 14px 10px 18px; }
 .person h3 { font: 700 1.3rem "Cormorant Garamond", serif; color: var(--cream); }
 .person p { font-size: .8rem; color: var(--gold); }
-.person.hide { display: none; }
-
-/* Галерея */
-.gallery { columns: 2; column-gap: 14px; }
-@media (min-width: 768px) { .gallery { columns: 3; column-gap: 18px; } }
-.g-item { break-inside: avoid; margin-bottom: 14px; border-radius: 16px; overflow: hidden; cursor: zoom-in; border: 1px solid rgba(232,184,90,.2); transition: transform .4s, box-shadow .4s; display: block; width: 100%; }
-@media (min-width: 768px) { .g-item { margin-bottom: 18px; } }
-.g-item:hover { transform: scale(1.025); box-shadow: 0 16px 40px rgba(0,0,0,.45), 0 0 26px rgba(240,138,36,.25); }
-.g-item img { width: 100%; display: block; }
 
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(15,2,6,.94); display: flex; align-items: center; justify-content: center; animation: fade .3s; }
 .lightbox[hidden] { display: none; }
@@ -162,62 +153,28 @@ body {
   #leaves { display: none; }
 }
 
-/* ===== Результаты жюри ===== */
-.muted { color: rgba(255,244,220,.65); font-size: .9rem; }
-.rating { display: grid; gap: 12px; max-width: 760px; margin-inline: auto; }
-.r-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 16px; padding: 14px 18px; animation: rowIn .6s both; animation-delay: calc(var(--i) * .05s); }
-@keyframes rowIn { from { opacity: 0; transform: translateY(14px); } }
-.place { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font: 700 1.5rem "Cormorant Garamond", serif; border: 1px solid rgba(232,184,90,.4); color: var(--gold); }
-.r-row.p1 .place { background: linear-gradient(135deg, #f7d98b, #e8b85a, #f08a24); color: #2a0710; box-shadow: 0 0 26px rgba(240,138,36,.65); }
-.r-row.p2 .place { background: linear-gradient(135deg, #f6f1e8, #b9b2a6); color: #2a0710; }
-.r-row.p3 .place { background: linear-gradient(135deg, #e8b07a, #a8602a); color: #2a0710; }
-.r-row.p1 { border-color: rgba(232,184,90,.7); }
-.r-name { font: 700 1.4rem "Cormorant Garamond", serif; color: var(--cream); overflow-wrap: anywhere; }
-.r-bar { height: 5px; margin-top: 8px; border-radius: 4px; background: rgba(255,244,220,.1); overflow: hidden; }
-.r-bar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--amber), var(--gold)); transition: width .8s cubic-bezier(.2,.7,.2,1); }
-.r-sum { font: 700 2rem "Cormorant Garamond", serif; color: var(--gold); text-align: right; }
-.r-sum small { display: block; font: 400 .7rem Montserrat, sans-serif; color: rgba(255,244,220,.6); }
-.empty-box { text-align: center; padding: 2.5rem 1.5rem; border: 1px dashed rgba(232,184,90,.4); border-radius: 20px; color: rgba(255,244,220,.75); }
-
-.table-wrap { overflow-x: auto; border: 1px solid rgba(232,184,90,.25); border-radius: 18px; background: rgba(0,0,0,.18); }
-.table-wrap[hidden] { display: none; }
-.rtable { width: 100%; border-collapse: collapse; min-width: 480px; }
-.rtable th, .rtable td { padding: 12px 14px; text-align: center; border-bottom: 1px solid rgba(232,184,90,.12); }
-.rtable th { color: var(--gold); font-weight: 600; font-size: .85rem; background: rgba(232,184,90,.08); white-space: nowrap; }
-.rtable td.name, .rtable th:first-child { text-align: left; }
-.rtable td.name { font-weight: 500; color: var(--cream); }
-.rtable td.sum, .rtable th:last-child { color: var(--gold); font-weight: 700; background: rgba(232,184,90,.06); }
-.rtable tbody tr { transition: background .3s; }
-.rtable tbody tr:hover { background: rgba(232,184,90,.07); }
-
-/* Панель жюри */
-.admin { position: fixed; inset: 0; z-index: 95; overflow-y: auto; background: rgba(22,3,9,.97); backdrop-filter: blur(10px); animation: fade .3s; }
-.admin[hidden], .admin-pane[hidden] { display: none; }
-.admin-box { max-width: 980px; margin: 0 auto; padding: 28px 18px 60px; }
-.admin-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.admin-x { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(232,184,90,.6); color: var(--gold); transition: .3s; flex: none; }
-.admin-x:hover { background: var(--gold); color: #2a0710; }
-.admin-pane { margin-top: 26px; animation: fade .3s; }
-.add-form { display: flex; flex-wrap: wrap; gap: 12px; }
-.field, .name-in, .score-in { background: rgba(255,244,220,.06); border: 1px solid rgba(232,184,90,.35); border-radius: 12px; color: var(--cream); padding: 12px 14px; transition: border-color .3s, box-shadow .3s; }
-.field { flex: 1 1 220px; }
-.field:focus, .name-in:focus, .score-in:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,184,90,.2); }
-.list { list-style: none; margin-top: 22px; display: grid; gap: 10px; }
-.li-row { display: flex; gap: 10px; align-items: center; }
-.name-in { flex: 1; min-width: 0; }
-.del, .btn-danger { padding: 10px 16px; border-radius: 999px; border: 1px solid rgba(240,90,70,.6); color: #ff9c8a; font-size: .85rem; transition: .3s; white-space: nowrap; }
-.del:hover, .btn-danger:hover { background: rgba(240,90,70,.18); }
-.btn-danger { padding: 14px 24px; }
-.score-in { width: 86px; padding: 9px 8px; text-align: center; }
-.admin .rtable td { padding: 8px 10px; }
-.admin .rtable { min-width: 0; }
-
-@media (max-width: 520px) {
-  .r-row { grid-template-columns: 44px 1fr auto; gap: 10px; padding: 12px; }
-  .place { width: 40px; height: 40px; font-size: 1.2rem; }
-  .r-sum { font-size: 1.6rem; }
-}
-
 /* Подпись авторов */
 .credit { margin-top: 14px; font: italic 500 1.15rem "Cormorant Garamond", serif; color: var(--gold); letter-spacing: .06em; opacity: .9; }
 .credit::before, .credit::after { content: "✦"; margin: 0 .6em; font-size: .7em; opacity: .7; }
+
+/* Команды */
+.team-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+.team-card { width: calc(50% - 9px); }
+@media (min-width: 768px) { .team-card { width: calc(33.333% - 12px); } }
+@media (max-width: 420px) { .team-card { width: 100%; max-width: 320px; } }
+.team-card .ph { width: 100%; cursor: zoom-in; }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.team-card:hover .ph img { transform: scale(1.06); }
+.lb-stage .ph { aspect-ratio: 4/3; }
+.lb-stage .ph img { object-fit: contain; background: #1a0309; }
+
+/* Таблица команд */
+.table-wrap { overflow-x: auto; border: 1px solid rgba(232,184,90,.25); border-radius: 18px; background: rgba(0,0,0,.18); }
+.rtable { width: 100%; border-collapse: collapse; }
+.rtable th, .rtable td { padding: 14px 18px; text-align: center; border-bottom: 1px solid rgba(232,184,90,.12); }
+.rtable th { color: var(--gold); font-weight: 600; font-size: .9rem; background: rgba(232,184,90,.08); }
+.rtable td.name, .rtable th:last-child { text-align: left; }
+.rtable td.name { font: 700 1.3rem "Cormorant Garamond", serif; color: var(--cream); }
+.rtable tbody tr:last-child td { border-bottom: 0; }
+.rtable tbody tr { transition: background .3s; }
+.rtable tbody tr:hover { background: rgba(232,184,90,.07); }
