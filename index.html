@@ -28,8 +28,6 @@
         <a class="nav-link" href="#about">О празднике</a>
         <a class="nav-link" href="#program">Программа</a>
         <a class="nav-link" href="#people">Участники</a>
-        <a class="nav-link" href="#gallery">Галерея</a>
-        <a class="nav-link" href="#results">Результаты</a>
       </nav>
       <div class="flex items-center gap-3">
         <button id="musicBtn" class="music-btn" aria-pressed="false" aria-label="Включить фоновую музыку" title="Фоновая музыка">
@@ -44,8 +42,6 @@
       <a href="#about">О празднике</a>
       <a href="#program">Программа</a>
       <a href="#people">Участники</a>
-      <a href="#gallery">Галерея</a>
-      <a href="#results">Результаты</a>
     </nav>
   </header>
 
@@ -62,7 +58,7 @@
         <div id="countdown" class="countdown hero-in" style="--d:.8s" aria-live="off"></div>
         <div class="mt-10 flex flex-wrap gap-4 justify-center hero-in" style="--d:1s">
           <a href="#program" class="btn-gold">Смотреть программу</a>
-          <a href="#results" class="btn-ghost">Результаты жюри</a>
+          <a href="#people" class="btn-ghost">Участники</a>
         </div>
       </div>
       <a href="#about" class="scroll-hint" aria-label="Прокрутить вниз"><span></span></a>
@@ -79,7 +75,7 @@
           <div class="card text-center"><div class="stat">11:00</div><p>время начала</p></div>
           <div class="card text-center"><div class="stat">5</div><p>конкурсов</p></div>
           <div class="card text-center"><div class="stat">23.10</div><p>дата конкурса</p></div>
-          <div class="card text-center"><div class="stat">2026</div><p>год</p></div>
+          <div class="card text-center"><div class="stat">5</div><p>команд</p></div>
         </div>
       </div>
     </section>
@@ -95,34 +91,17 @@
     <!-- Участники -->
     <section id="people" class="section">
       <div class="max-w-6xl mx-auto">
-        <h2 class="h2 text-center reveal">Участники</h2>
-        <div class="flex flex-wrap gap-3 justify-center mt-8 reveal" id="filters" role="group" aria-label="Фильтр участников">
-          <button class="chip active" data-f="all">Все</button>
-          <button class="chip" data-f="students">Ученики</button>
-          <button class="chip" data-f="teachers">Учителя</button>
-          <button class="chip" data-f="guests">Гости</button>
+        <h2 class="h2 text-center reveal">Участники 10-К класса</h2>
+        <p class="text-center text-amber-100/70 mt-4 reveal">Нажмите на фото, чтобы увеличить.</p>
+        <div id="teamGrid" class="team-grid mt-12"></div>
+
+        <h3 class="font-serif text-3xl text-gold text-center mt-20 reveal">Команды</h3>
+        <div class="table-wrap mt-8 reveal max-w-xl mx-auto">
+          <table class="rtable">
+            <thead><tr><th>№</th><th>Команда</th></tr></thead>
+            <tbody id="teamTable"></tbody>
+          </table>
         </div>
-        <div id="peopleGrid" class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-10"></div>
-      </div>
-    </section>
-
-    <!-- Галерея -->
-    <section id="gallery" class="section">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="h2 text-center reveal">Галерея</h2>
-        <p class="text-center text-amber-100/70 mt-4 reveal">Нажмите на кадр, чтобы увеличить.</p>
-        <div id="galleryGrid" class="gallery mt-10"></div>
-      </div>
-    </section>
-
-    <!-- Результаты жюри -->
-    <section id="results" class="section">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="h2 text-center reveal">Результаты жюри</h2>
-        <p class="text-center text-amber-100/70 mt-4 reveal">Рейтинг пересчитывается сразу после изменения любой оценки.</p>
-        <div class="flex justify-center mt-8 reveal"><button type="button" id="openAdmin" class="btn-gold">Панель жюри</button></div>
-        <div id="ratingList" class="rating mt-10"></div>
-        <div id="tableWrap" class="table-wrap mt-10" hidden><table id="resultsTable" class="rtable"></table></div>
       </div>
     </section>
 
@@ -146,54 +125,7 @@
     <button class="lb-btn lb-next" id="lbNext" aria-label="Следующее фото">›</button>
   </div>
 
-  <!-- Панель жюри -->
-  <div id="admin" class="admin" hidden role="dialog" aria-modal="true" aria-labelledby="adminTitle">
-    <div class="admin-box">
-      <div class="admin-head">
-        <h2 id="adminTitle" class="font-serif text-3xl gold-text font-bold">Панель жюри</h2>
-        <button type="button" id="adminClose" class="admin-x" aria-label="Закрыть панель">✕</button>
-      </div>
-      <div class="flex flex-wrap gap-2 mt-6" id="adminTabs">
-        <button type="button" class="chip active" data-tab="classes">Классы</button>
-        <button type="button" class="chip" data-tab="rounds">Раунды</button>
-        <button type="button" class="chip" data-tab="scores">Оценки</button>
-        <button type="button" class="chip" data-tab="data">Данные</button>
-      </div>
-
-      <div class="admin-pane" id="pane-classes">
-        <form id="classForm" class="add-form" autocomplete="off">
-          <input id="classInput" class="field" maxlength="40" placeholder="Название класса" aria-label="Название класса" required>
-          <button class="btn-gold" type="submit">Добавить класс</button>
-        </form>
-        <ul id="classList" class="list"></ul>
-      </div>
-
-      <div class="admin-pane" id="pane-rounds" hidden>
-        <form id="roundForm" class="add-form" autocomplete="off">
-          <input id="roundInput" class="field" maxlength="40" placeholder="Название раунда" aria-label="Название раунда" required>
-          <button class="btn-gold" type="submit">Добавить раунд</button>
-        </form>
-        <ul id="roundList" class="list"></ul>
-      </div>
-
-      <div class="admin-pane" id="pane-scores" hidden>
-        <p class="muted mb-4">Введите баллы в ячейки. Пустая ячейка — оценка не выставлена. Сумма и рейтинг обновляются сразу.</p>
-        <div id="scoreBox"></div>
-      </div>
-
-      <div class="admin-pane" id="pane-data" hidden>
-        <p class="muted">Данные хранятся в браузере этого устройства (localStorage). Оценки с разных телефонов сами не объединяются — для этого нужен сервер и общая база. Пока можно переносить данные файлом.</p>
-        <div class="flex flex-wrap gap-3 mt-6">
-          <button type="button" class="btn-ghost" id="exportBtn">Скачать данные (JSON)</button>
-          <button type="button" class="btn-ghost" id="importBtn">Загрузить из файла</button>
-          <button type="button" class="btn-danger" id="resetBtn">Удалить все данные</button>
-          <input type="file" id="importFile" accept="application/json,.json" hidden>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div id="toast" class="toast" role="status"></div>
   <script src="script.js"></script>
 </body>
-</html>
+</html> 
