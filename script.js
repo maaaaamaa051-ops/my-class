@@ -18,12 +18,10 @@ const PROGRAM = [
   ['Конкурс 4', 'Танец', 'Танцевальное выступление команд.'],
   ['Конкурс 5', 'Мода', 'Показ мод в осеннем стиле.']
 ];
-const PEOPLE = [
-  ['Участник 1', 'Ведущий', 'students'], ['Участница 2', 'Организатор', 'students'],
-  ['Участник 3', 'Танцор', 'students'], ['Участница 4', 'Вокал', 'students'],
-  ['Учитель 1', 'Классный руководитель', 'teachers'], ['Учитель 2', 'Хореограф', 'teachers'],
-  ['Гость 1', 'Почётный гость', 'guests'], ['Гость 2', 'Выпускник', 'guests']
-];
+// Участники 10-К класса: замените имена на настоящие. Фото: images/10k-1.jpg, images/10k-2.jpg ... по порядку списка
+const CLASS_10K = ['Участник 1', 'Участник 2', 'Участник 3', 'Участник 4', 'Участник 5', 'Участник 6'];
+// Команды-участницы (таблица)
+const TEAMS = ['10 К', '10 Р', '10 А', '11 К', '11 Р'];
 const GRADS = [
   ['#7a1a2b', '#f08a24'], ['#4a0f1c', '#e8b85a'], ['#a8321c', '#f7d98b'],
   ['#5c1424', '#c9741c'], ['#8c2a1a', '#e8b85a'], ['#3a0b17', '#f08a24']
@@ -66,15 +64,16 @@ addEventListener('resize', () => innerWidth >= 768 && setMenu(false));
 $('#timeline').innerHTML = PROGRAM.map(([t, title, text], i) =>
   `<li class="tl-item card reveal" style="--d:${i * .06}s"><div class="tl-time">${t}</div><h3>${title}</h3><p class="text-amber-100/70 mt-1">${text}</p></li>`).join('');
 
-$('#peopleGrid').innerHTML = PEOPLE.map(([name, role, group], i) =>
-  `<article class="card person reveal" data-group="${group}" style="--d:${(i % 4) * .08}s">
-     <div class="ph" style="background:${grad(i)}">${PERSON_SVG}<span class="ph-label">Фото</span></div>
-     <div class="info"><h3>${name}</h3><p>${role}</p></div></article>`).join('');
+// Если файла фото нет, остаётся заглушка (img удаляется при ошибке загрузки)
+$('#teamGrid').innerHTML = CLASS_10K.map((name, i) =>
+  `<article class="card person team-card reveal" style="--d:${(i % 3) * .08}s">
+     <button type="button" class="ph" style="background:${grad(i)}" aria-label="Увеличить фото: ${name}">
+       ${PERSON_SVG}<img src="images/10k-${i + 1}.jpg" alt="${name}" loading="lazy" onerror="this.remove()">
+     </button>
+     <div class="info"><h3>${name}</h3><p>10-К класс</p></div></article>`).join('');
 
-$$('#filters .chip').forEach(btn => btn.addEventListener('click', () => {
-  $$('#filters .chip').forEach(b => b.classList.toggle('active', b === btn));
-  $$('.person').forEach(p => p.classList.toggle('hide', btn.dataset.f !== 'all' && p.dataset.group !== btn.dataset.f));
-}));
+$('#teamTable').innerHTML = TEAMS.map((t, i) =>
+  `<tr><td>${i + 1}</td><td class="name">${t}</td></tr>`).join('');
 
 /* ===== Уведомления ===== */
 function toast(msg) {
@@ -83,22 +82,13 @@ function toast(msg) {
   clearTimeout(toast.id); toast.id = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-/* ===== Галерея и просмотр ===== */
-// Чтобы использовать свои фото, замените содержимое .g-item на <img src="images/photo1.jpg" alt="...">
-const RATIOS = ['4/5', '1/1', '3/4', '5/4', '4/5', '1/1', '3/4', '1/1'];
-$('#galleryGrid').innerHTML = RATIOS.map((r, i) =>
-  `<button type="button" class="g-item reveal" aria-label="Открыть фото ${i + 1}" style="--d:${(i % 3) * .08}s">
-     <span class="ph" style="aspect-ratio:${r};background:${grad(i)}">${PERSON_SVG}<span class="ph-label">Фото ${i + 1}</span></span></button>`).join('');
-
+/* ===== Просмотр фото ===== */
 const lb = $('#lightbox'), stage = $('#lbStage');
-const items = $$('.g-item');
+const items = $$('#teamGrid .ph');
 let cur = 0, lastFocus = null;
 function showPhoto(i) {
   cur = (i + items.length) % items.length;
-  stage.innerHTML = '';
-  stage.appendChild($('.ph, img', items[cur]).cloneNode(true));
-  const ph = $('.ph', stage);
-  if (ph) ph.style.aspectRatio = '4/3';
+  stage.innerHTML = `<div class="ph" style="background:${grad(cur)}">${items[cur].innerHTML}</div>`;
 }
 function openLb(i) { lastFocus = document.activeElement; showPhoto(i); setInert(true); lb.hidden = false; document.body.style.overflow = 'hidden'; $('#lbClose').focus(); }
 function closeLb() { lb.hidden = true; setInert(false); document.body.style.overflow = ''; lastFocus && lastFocus.focus(); }
@@ -183,186 +173,3 @@ musicBtn.addEventListener('click', async () => {
     toast('Не удалось включить музыку. Проверьте путь к файлу.');
   }
 });
-
-/* ===== Оценивание жюри ===== */
-const JURY_KEY = 'osen-2026-jury';
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const fmt = n => String(Number.isInteger(n) ? n : +n.toFixed(2));
-const scoreKey = (c, r) => c + '|' + r;
-const emptyDb = () => ({ classes: [], rounds: [], scores: {} });
-
-// Приводит любые данные (из хранилища или файла) к безопасному виду
-function sanitize(d) {
-  const out = emptyDb();
-  if (!d || typeof d !== 'object') return out;
-  const clean = a => (Array.isArray(a) ? a : [])
-    .filter(x => x && typeof x.id === 'string' && !x.id.includes('|') && typeof x.name === 'string' && x.name.trim())
-    .map(x => ({ id: x.id, name: x.name.trim().slice(0, 40) }));
-  out.classes = clean(d.classes);
-  out.rounds = clean(d.rounds);
-  const cs = new Set(out.classes.map(c => c.id)), rs = new Set(out.rounds.map(r => r.id));
-  Object.entries(d.scores || {}).forEach(([k, v]) => {
-    const [c, r] = k.split('|');
-    const n = Number(v);
-    if (cs.has(c) && rs.has(r) && v !== '' && v !== null && Number.isFinite(n)) out.scores[k] = n;
-  });
-  return out;
-}
-function loadDb() {
-  try { return sanitize(JSON.parse(localStorage.getItem(JURY_KEY))); } catch { return emptyDb(); }
-}
-let db = loadDb();
-function saveDb() {
-  try { localStorage.setItem(JURY_KEY, JSON.stringify(db)); }
-  catch { toast('Не удалось сохранить: хранилище браузера недоступно'); }
-}
-const sumOf = cid => db.rounds.reduce((s, r) => s + (db.scores[scoreKey(cid, r.id)] || 0), 0);
-const nameTaken = (list, name, exceptId) => list.some(x => x.id !== exceptId && x.name.toLowerCase() === name.toLowerCase());
-
-/* --- Публичные результаты --- */
-function renderResults() {
-  const hasScores = Object.keys(db.scores).length > 0;
-  const byName = (a, b) => a.c.name.localeCompare(b.c.name, 'ru');
-  const rows = db.classes.map(c => ({ c, sum: sumOf(c.id) }));
-  rows.sort((a, b) => hasScores ? (b.sum - a.sum || byName(a, b)) : byName(a, b));
-  let place = 0;
-  rows.forEach((r, i) => { if (i === 0 || r.sum !== rows[i - 1].sum) place = i + 1; r.place = place; });
-
-  const list = $('#ratingList'), wrap = $('#tableWrap');
-  if (!rows.length) {
-    list.innerHTML = '<div class="empty-box">Пока нет данных. Жюри добавит классы, раунды и оценки в панели жюри.</div>';
-    wrap.hidden = true;
-    return;
-  }
-  const max = Math.max(0, ...rows.map(r => r.sum));
-  list.innerHTML = rows.map((r, i) => {
-    const cls = hasScores && r.place <= 3 ? ` p${r.place}` : '';
-    const pct = max > 0 ? Math.max(0, r.sum) / max * 100 : 0;
-    return `<div class="card r-row${cls}" style="--i:${i}">
-      <div class="place">${hasScores ? r.place : '—'}</div>
-      <div><div class="r-name">${esc(r.c.name)}</div><div class="r-bar"><i style="width:${pct}%"></i></div></div>
-      <div class="r-sum">${fmt(r.sum)}<small>баллов</small></div></div>`;
-  }).join('');
-
-  wrap.hidden = false;
-  $('#resultsTable').innerHTML =
-    `<thead><tr><th>Класс</th>${db.rounds.map(r => `<th>${esc(r.name)}</th>`).join('')}<th>Сумма</th></tr></thead><tbody>` +
-    rows.map(r => `<tr><td class="name">${hasScores ? r.place + '. ' : ''}${esc(r.c.name)}</td>` +
-      db.rounds.map(rd => { const v = db.scores[scoreKey(r.c.id, rd.id)]; return `<td>${v === undefined ? '—' : fmt(v)}</td>`; }).join('') +
-      `<td class="sum">${fmt(r.sum)}</td></tr>`).join('') + '</tbody>';
-}
-
-/* --- Панель жюри --- */
-const listItem = (kind, x) =>
-  `<li class="li-row"><input class="name-in" data-kind="${kind}" data-id="${x.id}" value="${esc(x.name)}" maxlength="40" aria-label="Название">` +
-  `<button type="button" class="del" data-kind="${kind}" data-id="${x.id}" aria-label="Удалить ${esc(x.name)}">Удалить</button></li>`;
-
-function renderLists() {
-  $('#classList').innerHTML = db.classes.length ? db.classes.map(c => listItem('class', c)).join('') : '<li class="muted">Классов пока нет.</li>';
-  $('#roundList').innerHTML = db.rounds.length ? db.rounds.map(r => listItem('round', r)).join('') : '<li class="muted">Раундов пока нет.</li>';
-}
-function renderScoreTable() {
-  const box = $('#scoreBox');
-  if (!db.classes.length || !db.rounds.length) {
-    box.innerHTML = '<p class="muted">Чтобы вводить оценки, добавьте хотя бы один класс и один раунд.</p>';
-    return;
-  }
-  box.innerHTML = `<div class="table-wrap"><table class="rtable"><thead><tr><th>Класс</th>${db.rounds.map(r => `<th>${esc(r.name)}</th>`).join('')}<th>Сумма</th></tr></thead><tbody>` +
-    db.classes.map(c => `<tr><td class="name">${esc(c.name)}</td>` +
-      db.rounds.map(r => {
-        const v = db.scores[scoreKey(c.id, r.id)];
-        return `<td><input class="score-in" type="number" step="any" inputmode="decimal" data-c="${c.id}" data-r="${r.id}" value="${v === undefined ? '' : v}" aria-label="${esc(c.name)}, ${esc(r.name)}"></td>`;
-      }).join('') + `<td class="sum" data-sum="${c.id}">${fmt(sumOf(c.id))}</td></tr>`).join('') + '</tbody></table></div>';
-}
-function refreshAll() { renderLists(); renderScoreTable(); renderResults(); }
-
-const admin = $('#admin');
-function openAdmin() { setInert(true); admin.hidden = false; document.body.style.overflow = 'hidden'; refreshAll(); $('#adminClose').focus(); }
-function closeAdmin() { admin.hidden = true; setInert(false); document.body.style.overflow = ''; $('#openAdmin').focus(); }
-$('#openAdmin').addEventListener('click', openAdmin);
-$('#adminClose').addEventListener('click', closeAdmin);
-addEventListener('keydown', e => { if (e.key === 'Escape' && !admin.hidden) closeAdmin(); });
-
-$$('#adminTabs .chip').forEach(btn => btn.addEventListener('click', () => {
-  $$('#adminTabs .chip').forEach(b => b.classList.toggle('active', b === btn));
-  $$('.admin-pane').forEach(p => p.hidden = p.id !== 'pane-' + btn.dataset.tab);
-  if (btn.dataset.tab === 'scores') renderScoreTable();
-}));
-
-function addItem(e, kind) {
-  e.preventDefault();
-  const input = $(kind === 'class' ? '#classInput' : '#roundInput');
-  const list = kind === 'class' ? db.classes : db.rounds;
-  const name = input.value.trim().slice(0, 40);
-  if (!name) return;
-  if (nameTaken(list, name)) return toast('Такое название уже есть');
-  list.push({ id: uid(), name });
-  saveDb(); input.value = ''; refreshAll(); input.focus();
-}
-$('#classForm').addEventListener('submit', e => addItem(e, 'class'));
-$('#roundForm').addEventListener('submit', e => addItem(e, 'round'));
-
-// Переименование и удаление
-admin.addEventListener('change', e => {
-  const inp = e.target.closest('.name-in');
-  if (!inp) return;
-  const list = inp.dataset.kind === 'class' ? db.classes : db.rounds;
-  const item = list.find(x => x.id === inp.dataset.id);
-  const name = inp.value.trim().slice(0, 40);
-  if (!item) return;
-  if (!name || nameTaken(list, name, item.id)) { inp.value = item.name; return toast(name ? 'Такое название уже есть' : 'Название не может быть пустым'); }
-  item.name = name; saveDb(); renderScoreTable(); renderResults();
-});
-admin.addEventListener('click', e => {
-  const btn = e.target.closest('.del');
-  if (!btn) return;
-  const isClass = btn.dataset.kind === 'class';
-  const list = isClass ? db.classes : db.rounds;
-  const item = list.find(x => x.id === btn.dataset.id);
-  if (!item || !confirm(`Удалить ${isClass ? 'класс' : 'раунд'} «${item.name}» и связанные оценки?`)) return;
-  list.splice(list.indexOf(item), 1);
-  Object.keys(db.scores).forEach(k => { if (k.split('|')[isClass ? 0 : 1] === item.id) delete db.scores[k]; });
-  saveDb(); refreshAll();
-});
-
-// Ввод оценок: сразу сохраняем и пересчитываем
-admin.addEventListener('input', e => {
-  const inp = e.target.closest('.score-in');
-  if (!inp) return;
-  const k = scoreKey(inp.dataset.c, inp.dataset.r);
-  if (inp.value === '') delete db.scores[k];
-  else { const n = Number(inp.value); if (!Number.isFinite(n)) return; db.scores[k] = n; }
-  saveDb();
-  const cell = $(`[data-sum="${inp.dataset.c}"]`, admin);
-  if (cell) cell.textContent = fmt(sumOf(inp.dataset.c));
-  renderResults();
-});
-
-// Данные: экспорт, импорт, сброс
-$('#exportBtn').addEventListener('click', () => {
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' })),
-    download: 'osen-2026-results.json'
-  });
-  a.click(); URL.revokeObjectURL(a.href);
-});
-$('#importBtn').addEventListener('click', () => $('#importFile').click());
-$('#importFile').addEventListener('change', async e => {
-  const file = e.target.files[0];
-  e.target.value = '';
-  if (!file) return;
-  try {
-    const data = sanitize(JSON.parse(await file.text()));
-    if (!confirm(`Заменить текущие данные? В файле: классов — ${data.classes.length}, раундов — ${data.rounds.length}.`)) return;
-    db = data; saveDb(); refreshAll(); toast('Данные загружены');
-  } catch { toast('Не удалось прочитать файл'); }
-});
-$('#resetBtn').addEventListener('click', () => {
-  if (!confirm('Удалить все классы, раунды и оценки? Это нельзя отменить.')) return;
-  db = emptyDb(); saveDb(); refreshAll(); toast('Данные удалены');
-});
-
-// Обновление при изменении данных в другой вкладке
-addEventListener('storage', e => { if (e.key === JURY_KEY) { db = loadDb(); refreshAll(); } });
-renderResults();
