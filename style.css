@@ -178,3 +178,7 @@ body {
 .rtable tbody tr:last-child td { border-bottom: 0; }
 .rtable tbody tr { transition: background .3s; }
 .rtable tbody tr:hover { background: rgba(232,184,90,.07); }
+
+/* Название школы */
+.school { margin: 0 auto 1.2rem; max-width: 34rem; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1.7; color: rgba(255,244,220,.75); }
+.school-end { margin: 1.4rem auto 0; font-size: .7rem; color: rgba(255,244,220,.55); }
