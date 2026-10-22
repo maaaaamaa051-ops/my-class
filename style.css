@@ -182,3 +182,16 @@ body {
 /* Название школы */
 .school { margin: 0 auto 1.2rem; max-width: 34rem; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; line-height: 1.7; color: rgba(255,244,220,.75); }
 .school-end { margin: 1.4rem auto 0; font-size: .7rem; color: rgba(255,244,220,.55); }
+
+/* Автор */
+.author { margin-top: 6px; font: 700 1.5rem "Cormorant Garamond", serif; letter-spacing: .08em; color: var(--cream); text-shadow: 0 0 20px rgba(240,138,36,.45); }
+
+/* Мобильная главная: не под шапкой, отсчёт в один ряд */
+.hero { padding-top: 5.5rem; padding-bottom: 5rem; }
+@media (max-width: 520px) {
+  .school { font-size: .68rem; letter-spacing: .08em; }
+  .countdown { flex-wrap: nowrap; gap: 8px; }
+  .cd-box { min-width: 0; flex: 1 1 0; padding: 10px 4px; }
+  .cd-box b { font-size: 1.6rem; }
+  .cd-box span { font-size: .62rem; }
+}
